@@ -5,7 +5,7 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
 import * as path from "path";
 import { Distribution, OriginAccessIdentity } from "aws-cdk-lib/aws-cloudfront";
-
+import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 export class FrontEndCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -31,10 +31,19 @@ export class FrontEndCdkStack extends cdk.Stack {
     );
     myBucket.grantRead(originAccessIdentity);
 
+    const myCachePolicy = new cloudfront.CachePolicy(this, "CachePolicy", {
+      minTtl: cdk.Duration.seconds(1),
+      maxTtl: cdk.Duration.seconds(86400),
+      defaultTtl: cdk.Duration.seconds(5),
+      enableAcceptEncodingGzip: true,
+      enableAcceptEncodingBrotli: true,
+    });
+
     new Distribution(this, "myDist", {
       defaultRootObject: "index.html",
       defaultBehavior: {
         origin: new S3Origin(myBucket, { originAccessIdentity }),
+        cachePolicy: myCachePolicy,
       },
     });
   }
