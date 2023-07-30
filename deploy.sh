@@ -1,6 +1,6 @@
 #!/bin/bash
 
-frontend_directory="FrontEnd"
+frontend_directory="moneyapp_flutter"
 frontend_cdk_directory="FrontEndCDK"
 site_contents="site-contents"
 
@@ -21,17 +21,16 @@ cd "$frontend_directory" || exit 1
 
 full_frontebd_dir_path="$PWD"
 
-# Check if npm is installed
-if ! command -v npm &> /dev/null; then
-  echo "Error: npm is not installed. Please install npm and try again."
+# Check if flutter is installed
+if ! command -v flutter &> /dev/null; then
+  echo "Error: flutter is not installed. Please install flutter and try again."
   exit 1
 fi
 
 # Build the FrontEnd package
 echo "Build the $frontend_directory package"
 
-npm run build
-
+flutter build web --no-tree-shake-icons
 
 # cd to the CDK package
 echo "cd to the CDK package"
@@ -44,13 +43,13 @@ full_frontend_cdk_dir_path="$PWD"
 # Build the CDK package
 echo "Build the CDK package"
 
-npm run build
-
-# Check if cdk is installed
-if ! command -v cdk &> /dev/null; then
-  echo "Error: cdk is not installed. Please install cdk and try again."
+# Check if npm is installed
+if ! command -v npm &> /dev/null; then
+  echo "Error: npm is not installed. Please install npm and try again."
   exit 1
 fi
+
+npm run build
 
 echo "setup $site_contents directory"
 
@@ -60,7 +59,7 @@ mkdir $site_contents
 
 echo "copy assets to 'site_contents' directory"
 
-cp -r "$full_frontebd_dir_path/build/" "$full_frontend_cdk_dir_path/$site_contents"
+sudo cp -r "$full_frontebd_dir_path/build/web/" "$full_frontend_cdk_dir_path/$site_contents"
 
 # Check if cdk is installed
 if ! command -v cdk &> /dev/null; then
