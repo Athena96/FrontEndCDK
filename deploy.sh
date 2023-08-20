@@ -73,4 +73,4 @@ cdk synth
 
 # cdk deploy
 echo "deploy the CDK package"
-cdk deploy
+cdk deploy --require-approval never
