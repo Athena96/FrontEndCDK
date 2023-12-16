@@ -12,7 +12,7 @@ export class FrontEndCdkStack extends cdk.Stack {
 
     // Bucket
     const myBucket = new s3.Bucket(this, "myDevBucket", {
-      accessControl: s3.BucketAccessControl.PRIVATE,
+      accessControl: s3.BucketAccessControl.PRIVATE
     });
 
     // Upload contents to site
@@ -41,6 +41,20 @@ export class FrontEndCdkStack extends cdk.Stack {
 
     new Distribution(this, "myDist", {
       defaultRootObject: "index.html",
+      errorResponses: [
+        {
+          httpStatus: 403,
+          responseHttpStatus: 200,
+          responsePagePath: "/index.html",
+          ttl: cdk.Duration.seconds(0),
+        },
+        {
+          httpStatus: 404,
+          responseHttpStatus: 200,
+          responsePagePath: "/index.html",
+          ttl: cdk.Duration.seconds(0),
+        }
+      ],
       defaultBehavior: {
         origin: new S3Origin(myBucket, { originAccessIdentity }),
         cachePolicy: myCachePolicy,
